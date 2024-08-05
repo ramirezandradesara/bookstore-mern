@@ -1,10 +1,12 @@
-import express, { response } from "express";
-import { PORT, mongoURL } from "./config.js";
+import express from "express";
 import mongoose from "mongoose";
 import { Book } from "./models/bookModel.js";
+import dotenv from "dotenv";
 
 const app = express();
 app.use(express.json());
+dotenv.config();
+const url = process.env.mongoURL;
 
 app.get("/", (request, response) => {
   console.log(request);
@@ -102,12 +104,14 @@ app.delete("/books/:id", async (req, res) => {
 });
 
 mongoose
-  .connect(mongoURL)
+  .connect(url)
   .then(() => {
     console.log("Database running. App connected to database");
 
-    app.listen(PORT, () => {
-      console.log(`Server running. App is listening to port: ${PORT}`);
+    app.listen(process.env.PORT, () => {
+      console.log(
+        `Server running. App is listening to port: ${process.env.PORT}`
+      );
     });
   })
   .catch((error) => {
