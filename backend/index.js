@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { Book } from "./models/bookModel.js";
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
 app.get("/", (request, response) => {
   console.log(request);
@@ -33,6 +33,20 @@ app.post("/books", async (request, response) => {
 
     const book = await Book.create(newBook);
     return response.status(201).send(book);
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ message: error.message });
+  }
+});
+
+// Route to get all books
+app.get("/books", async (request, response) => {
+  try {
+    const books = await Book.find({});
+    return response.status(200).json({
+      count: books.length,
+      data: books,
+    });
   } catch (error) {
     console.log(error);
     response.status(500).send({ message: error.message });
