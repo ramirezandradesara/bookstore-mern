@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import { PORT, mongoURL } from "./config.js";
 import mongoose from "mongoose";
 import { Book } from "./models/bookModel.js";
@@ -62,6 +62,27 @@ app.get("/books/:id", async (request, response) => {
   } catch (error) {
     console.log(error);
     response.status(500).send({ message: error.message });
+  }
+});
+
+// Route to update a book by id
+app.put("/books/:id", async (req, res) => {
+  try {
+    if (!req.body.title || !req.body.author || !req.body.publishYear) {
+      return res.status(400).send({
+        message: "Send all required field: title, author and publishYear",
+      });
+    }
+
+    const { id } = req.params;
+    const result = await Book.findByIdAndUpdate(id, req.body);
+
+    if (!result) return res.status(404).send({ message: "Book not found" });
+
+    return res.status(200).send({ message: "Book update sucessfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: error.message });
   }
 });
 
